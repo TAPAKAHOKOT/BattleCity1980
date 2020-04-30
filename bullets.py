@@ -67,6 +67,7 @@ class Bullet:
                         winsound.PlaySound("music/bonus_created.wav", winsound.SND_ASYNC)
                     self.settings.tanks_bangs.append([bot_el.x + bot_el.size // 2, bot_el.y + bot_el.size // 2, 1, 0, bot_el.bot_cost])
                     self.settings.enemies_killed[self.ind - 1][bot_el.tank_ind - 2] += 1
+                    self.settings.score[self.ind - 1] += bot_el.bot_cost
 
                     return True
         if self.team == 2:

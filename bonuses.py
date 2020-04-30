@@ -74,9 +74,18 @@ class Bonus:
             winsound.PlaySound("music/bomb_bonus.wav", winsound.SND_ASYNC)
             self.settings.enemies_left -= len(self.settings.bots)
 
+            score_to_add = 0
             for bot_el in self.settings.bots:
                 winsound.PlaySound("music/bot_boom.wav", winsound.SND_ASYNC)
-                self.settings.tanks_bangs.append([bot_el.x + bot_el.size // 2, bot_el.y + bot_el.size // 2, 1, 0, 1])
+                self.settings.tanks_bangs.append([bot_el.x + bot_el.size // 2, bot_el.y + bot_el.size // 2, 1, 0, bot_el.bot_cost])
+                score_to_add += bot_el.bot_cost
+
+                if not bot_el.blink:
+                    self.settings.bonuses.append(Bonus(self.settings))
+
+            self.settings.score[0] += score_to_add // 2
+            self.settings.score[1] += score_to_add // 2
+
             self.settings.bots = []
 
         if self.bonus_index == 6:

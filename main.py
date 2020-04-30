@@ -138,33 +138,42 @@ def show_score():
     settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 140, 200)))
 
 
+    text = settings.score_font.render(f"SCORE", True, (220, 60, 0))
+    settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2, 320)))
+
+    text = settings.score_font.render(f"{settings.score[0]}", True, (255, 255, 255))
+    settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 140, 305)))
+    text = settings.score_font.render(f"{settings.score[1]}", True, (255, 255, 255))
+    settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 140, 305)))
+
+
     for k in range(4):
-        a_img = surf.blit(settings.bots_imgs[k], (settings.win_width // 2 - settings.cells_size * 1.5 // 2, 300 + k * 100))
+        a_img = surf.blit(settings.bots_imgs[k], (settings.win_width // 2 - settings.cells_size * 1.5 // 2, 400 + k * 100))
 
         text = settings.score_font.render( f"PTS", True, (255, 255, 255))
-        settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2 - 180, 340 + k * 100)))
-        settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2 + 180, 340 + k * 100)))
+        settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2 - 180, 440 + k * 100)))
+        settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2 + 180, 440 + k * 100)))
 
         if settings.killed[0][k] != -1:
             text = settings.score_font.render(f"{settings.killed[0][k]}", True, (255, 255, 255))
-            settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2 - 80, 340 + k * 100)))
+            settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2 - 80, 440 + k * 100)))
 
             text = settings.score_font.render(f"{settings.killed[0][k] * settings.bots_costs[k]}", True, (255, 255, 255))
-            settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 280, 320 + k * 100)))
+            settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 280, 420 + k * 100)))
 
         if settings.killed[1][k] != -1:
             text = settings.score_font.render(f"{settings.killed[1][k]}", True, (255, 255, 255))
-            settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2 + 80, 340 + k * 100)))
+            settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2 + 80, 440 + k * 100)))
 
             text = settings.score_font.render(f"{settings.killed[1][k] * settings.bots_costs[k]}", True, (255, 255, 255))
-            settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 280, 320 + k * 100)))
+            settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 280, 420 + k * 100)))
 
-    pg.draw.line(settings.main_surf, (255, 255, 255), (settings.win_width // 2 - 300, 700),
-                 (settings.win_width // 2 + 300, 700), 3)
+    pg.draw.line(settings.main_surf, (255, 255, 255), (settings.win_width // 2 - 300, 800),
+                 (settings.win_width // 2 + 300, 800), 3)
 
     text = settings.score_font.render(f"Total", True, (255, 255, 255))
-    settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 140, 730)))
-    settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 140, 730)))
+    settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 140, 830)))
+    settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 140, 830)))
 
 
     if settings.main_counter % 4 == 0 and settings.p < 4:
@@ -185,10 +194,10 @@ def show_score():
     if settings.p == 4:
 
         text = settings.score_font.render(f"{sum(settings.enemies_killed[0])}", True, (255, 255, 255))
-        settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 80, 730)))
+        settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 80, 830)))
 
         text = settings.score_font.render(f"{sum(settings.enemies_killed[1])}", True, (255, 255, 255))
-        settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 80, 730)))
+        settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 80, 830)))
 
 
 def show_stage():
@@ -289,9 +298,6 @@ while True:
         else:
             bot_el.draw()
 
-    for bonus in settings.bonuses:
-        bonus.draw()
-
     if (settings.bots_spawn_counter % settings.bots_spawner_speed == 0
             and settings.bots_spawned < settings.enemies_at_level) or settings.bots_spawn_counter == 5:
         settings.bots.append(Bot(settings))
@@ -315,28 +321,27 @@ while True:
 
     for bang in settings.tanks_bangs:
 
-        text = settings.points_font.render(f"{bang[4]}", True, (255, 255, 255))
-
-        test_surf = pg.Surface(text.get_size(), pg.SRCALPHA)
-        test_surf.fill((255, 255, 255, int(255 * ((20 - bang[3]) / 20))))
-
-        text.blit(test_surf, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
-
-
         settings.main_surf.blit(settings.booms[bang[2] - 1],
                                 (bang[0] - settings.cells_size, bang[1] - settings.cells_size))
 
         settings.main_surf.blit(settings.big_booms[bang[2] - 1],
                                 (bang[0] - settings.cells_size * 2, bang[1] - settings.cells_size * 2))
 
-        settings.main_surf.blit(text, text.get_rect(center=(bang[0], bang[1] - bang[3])))
+        if bang[4]:
+            text = settings.points_font.render(f"{bang[4]}", True, (255, 255, 255))
+
+            test_surf = pg.Surface(text.get_size(), pg.SRCALPHA)
+            test_surf.fill((255, 255, 255, int(255 * ((20 - bang[3]) / 20))))
+
+            text.blit(test_surf, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
+
+            settings.main_surf.blit(text, text.get_rect(center=(bang[0], bang[1] - bang[3])))
 
         bang[3] += 1
         if bang[3] % anim_speed == 0:
             bang[2] += 1
 
         if bang[3] == anim_speed * 6 + 3:
-            settings.score += bang[4]
             settings.tanks_bangs.pop(settings.tanks_bangs.index(bang))
 
     for block in settings.grass:
@@ -347,6 +352,9 @@ while True:
 
     for block in settings.fin:
         block.draw()
+
+    for bonus in settings.bonuses:
+        bonus.draw()
 
     text = settings.hpfont.render(f"I P", True, (0, 0, 0))
     settings.main_surf.blit(text, text.get_rect(center=(settings.win_width - 25, settings.win_height // 2 - 60)))

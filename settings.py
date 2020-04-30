@@ -46,13 +46,13 @@ class Settings:
         self.bangs = []
         self.tanks_bangs = []
 
-        self.tanks_speed = [7, 6, 5, 5]
+        self.tanks_speed = [8, 7, 6, 6]
         self.tanks_force = [1, 2, 3, 3]
-        self.tanks_fire_rate = [7, 8, 5, 10]
-        self.tanks_bullets_speed = [14, 18, 12, 10]
+        self.tanks_fire_rate = [6, 8, 3, 7]
+        self.tanks_bullets_speed = [12, 24, 16, 14]
         self.tanks_health = [1, 1, 2, 2]
 
-        self.bots_speed = [6, 6, 8, 5]
+        self.bots_speed = [8, 7, 12, 5]
         self.bots_fire_rate = [10, 12, 10, 14]
         self.bots_bullets_speed = [12, 16, 12, 10]
 
@@ -83,7 +83,7 @@ class Settings:
 
         self.mini_tank = transform.scale(image.load("images/mini_tank.png"), (24, 24))
 
-        self.score = 0
+        self.score = [0, 0]
         self.end_level_wait = 0
 
         self.bots_imgs = []

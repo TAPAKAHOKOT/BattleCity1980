@@ -99,7 +99,7 @@ if load == "y":
                             r = []
                             for t in i.split(", "):
                                 if t != "":
-                                    r.append(int(t))
+                                    r.append(int(t[:1]))
                             if r:
                                 co.append(r)
                 if co:
@@ -155,12 +155,15 @@ while True:
         x = int(pos[0] // cells_size)
         y = int(pos[1] // cells_size)
 
-        if type(field[y][x]) is list and not draw_full_bricks:
-            x_d, y_d = pos[0] - x * cells_size, pos[1] - y * cells_size
-            if [x_d // (cells_size // 2), y_d // (cells_size // 4)] in field[y][x]:
-                field[y][x].remove([x_d // (cells_size // 2), y_d // (cells_size // 4)])
-        else:
-            field[y][x] = 0
+        try:
+            if type(field[y][x]) is list and not draw_full_bricks:
+                x_d, y_d = pos[0] - x * cells_size, pos[1] - y * cells_size
+                if [x_d // (cells_size // 2), y_d // (cells_size // 4)] in field[y][x]:
+                    field[y][x].remove([x_d // (cells_size // 2), y_d // (cells_size // 4)])
+            else:
+                field[y][x] = 0
+        except:
+            pass
 
 
 

@@ -117,20 +117,30 @@ class Tank:
 
     def death(self):
         if not self.defeat_on:
+            self.settings.tanks_bangs.append(
+                [self.x + self.size // 2, self.y + self.size // 2, 1, 0, 0])
+
             winsound.PlaySound("music/death.wav", winsound.SND_ASYNC)
 
             self.health -= 1
 
-            self.x, self.y = self.settings.spawns[self.ind - 1]
+            if self.health > 0:
+                self.x, self.y = self.settings.spawns[self.ind - 1]
 
-            self.x, self.y = 50 + self.settings.cells_size * self.x - int(self.settings.cells_size * 1.3) // 2, \
-                             50 + self.settings.cells_size * self.y - int(self.settings.cells_size * 1.3) // 2
-            self.start_counter = 0
+                self.x, self.y = 50 + self.settings.cells_size * self.x - int(self.settings.cells_size * 1.3) // 2, \
+                                 50 + self.settings.cells_size * self.y - int(self.settings.cells_size * 1.3) // 2
+                self.start_counter = 0
 
-            self.def_counter = self.main_counter + 60
-            self.defeat_on = True
+                self.def_counter = self.main_counter + 60
+                self.defeat_on = True
+            else:
+                self.health = 0
+                self.x, self.y = -1000, -1000
 
     def respawn(self):
+
+        self.health = 3
+
         self.x, self.y = self.settings.spawns[self.ind - 1]
 
         self.x, self.y = 50 + self.settings.cells_size * self.x - int(self.settings.cells_size * 1.3) // 2, \
@@ -149,7 +159,7 @@ class Tank:
             self.defeat_on = False
 
     def update(self):
-        if self.start_counter > self.settings.spawn_time:
+        if self.start_counter > self.settings.spawn_time and self.health > 0:
 
             self.counter += 1
             self.main_counter += 1
