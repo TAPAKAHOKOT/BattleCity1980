@@ -33,10 +33,11 @@ class Tank:
         self.moving = False
 
         self.bullet_move = [0, -1]
-        self.fire_rate = 5
+        self.fire_rate = self.settings.tanks_fire_rate[self.tank_level - 1]
         self.counter = 0
         self.start_counter = 0
         self.def_counter = 100
+        self.main_counter = 0
 
         self.def_img = []
         self.defeat_on = True
@@ -84,7 +85,7 @@ class Tank:
                (40 < (self.y + step[1]) < self.settings.win_height - 75)
 
 
-        self.test_rect = pg.Rect((self.x + step[0] // 2, self.y + step[1] // 2, self.size, self.size))
+        self.test_rect = pg.Rect((self.x + step[0] // 2 + 5, self.y + step[1] // 2 + 5, self.size - 10, self.size - 10))
 
         # test = pg.draw.rect(self.settings.main_surf, (255, 0, 0), self.test_rect, 1)
 
@@ -126,7 +127,7 @@ class Tank:
                              50 + self.settings.cells_size * self.y - int(self.settings.cells_size * 1.3) // 2
             self.start_counter = 0
 
-            self.def_counter = self.counter + 100
+            self.def_counter = self.counter + 60
             self.defeat_on = True
 
     def respawn(self):
@@ -136,11 +137,11 @@ class Tank:
                          50 + self.settings.cells_size * self.y - int(self.settings.cells_size * 1.3) // 2
         self.start_counter = 0
 
-        self.def_counter = self.counter + 100
+        self.def_counter = self.main_counter + 60
         self.defeat_on = True
 
     def defeat(self):
-        if self.counter < self.def_counter:
+        if self.main_counter < self.def_counter:
             self.defeat_on = True
 
             img = self.settings.main_surf.blit(self.def_img[self.counter % 4], (self.x - self.size // 2 + 2, self.y - self.size // 2 + 5))
@@ -151,6 +152,7 @@ class Tank:
         if self.start_counter > self.settings.spawn_time:
 
             self.counter += 1
+            self.main_counter += 1
 
             if self.defeat_on:
                 self.defeat()
@@ -178,3 +180,4 @@ class Tank:
                     self.y -= self.speed
 
             self.rect = pg.Rect((self.x, self.y, self.size, self.size))
+            # t = pg.draw.rect(self.settings.main_surf, (255, 0, 0), self.rect, 1)

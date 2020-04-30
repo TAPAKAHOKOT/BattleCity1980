@@ -1,7 +1,7 @@
 import winsound
 
 from pygame import transform, image, Rect
-from random import randint as rnd
+from random import randint as rnd, choice
 
 
 class Bonus:
@@ -12,7 +12,8 @@ class Bonus:
 
         self.rect = Rect((self.x, self.y, self.settings.cells_size * 2, self.settings.cells_size * 2))
 
-        self.bonus_index = rnd(1, 6)
+        # self.bonus_index = rnd(1, 6)
+        self.bonus_index = choice([1, 2, 4, 5, 6])
 
         self.image = transform.scale(image.load(f"images/bonuses/bonus{self.bonus_index}.png"),
                                      (self.settings.cells_size * 2, self.settings.cells_size * 2))
@@ -71,6 +72,7 @@ class Bonus:
         if self.bonus_index == 5:
             # Bomb all enemies
             winsound.PlaySound("music/bomb_bonus.wav", winsound.SND_ASYNC)
+            self.settings.enemies_left -= len(self.settings.bots)
 
             for bot_el in self.settings.bots:
                 winsound.PlaySound("music/bot_boom.wav", winsound.SND_ASYNC)

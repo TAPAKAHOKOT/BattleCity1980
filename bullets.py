@@ -30,13 +30,14 @@ class Bullet:
 
     def check_coll(self):
         self.check_rect = pg.Rect((self.x - 10, self.y - 10, 20, 20))
-        # g = pg.draw.rect(self.surf, (255, 0, 0), self.check_rect, 1)
+        self.break_rect = pg.Rect((self.x - 20, self.y - 20, 40, 40))
+        # g = pg.draw.rect(self.surf, (255, 0, 0), self.break_rect, 1)
 
         res = False
 
-        for k in range(2):
+        for k in range(3):
             for block in self.settings.bricks:
-                if self.check_rect.clip(block.draw_rect):
+                if self.break_rect.clip(block.draw_rect):
                     self.settings.bricks.pop(self.settings.bricks.index(block))
                     self.settings.bangs.append([self.x, self.y, 1, 0, 1])
                     res = True

@@ -132,7 +132,7 @@ while True:
         for i in range(2):
             enemies_counter += 1
             if enemies_counter <= settings.enemies_left:
-                img = settings.main_surf.blit(settings.mini_tank, (settings.win_width - 45 + i * 20, settings.win_height // 2 - 320 + k * 30))
+                img = settings.main_surf.blit(settings.mini_tank, (settings.win_width - 46 + i * 20, settings.win_height // 2 - 450 + k * 30))
 
     if settings.enemies_left == 0:
         settings.enemies_left = settings.enemies_at_level
@@ -204,7 +204,7 @@ while True:
     if (settings.bots_spawn_counter % settings.bots_spawner_speed == 0
             and settings.bots_spawned < settings.enemies_at_level) or settings.bots_spawn_counter == 5:
         settings.bots.append(Bot(settings))
-        settings.bots_spawner_speed -= 5
+        settings.bots_spawner_speed -= 3
         settings.bots_spawned += 1
 
     for block in settings.armor:

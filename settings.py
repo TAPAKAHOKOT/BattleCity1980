@@ -18,9 +18,9 @@ class Settings:
 
         self.levels = None
 
-        self.cur_level = 4
+        self.cur_level = 2
 
-        self.enemies_at_level = 14
+        self.enemies_at_level = 20
         self.bots_spawned = 0
         self.enemies_left = self.enemies_at_level
 
@@ -46,9 +46,10 @@ class Settings:
         self.bangs = []
         self.tanks_bangs = []
 
-        self.tanks_speed = [6, 5, 4, 4]
+        self.tanks_speed = [7, 6, 5, 5]
         self.tanks_force = [1, 2, 3, 3]
-        self.tanks_bullets_speed = [12, 10, 8, 10]
+        self.tanks_fire_rate = [7, 8, 10, 12]
+        self.tanks_bullets_speed = [14, 18, 12, 10]
         self.tanks_health = [1, 1, 2, 2]
 
         self.spawn_time = 40
