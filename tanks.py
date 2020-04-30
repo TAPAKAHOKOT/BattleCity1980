@@ -112,7 +112,7 @@ class Tank:
             winsound.PlaySound("music/fire.wav", winsound.SND_ASYNC)
 
             self.settings.bullets.append(Bullet(self.settings, (self.x, self.y), self.bullet_move, 1,
-                                                self.settings.tanks_bullets_speed[self.tank_level - 1]))
+                                                self.settings.tanks_bullets_speed[self.tank_level - 1], self.ind))
             self.counter = 0
 
     def death(self):

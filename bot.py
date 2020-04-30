@@ -28,15 +28,17 @@ class Bot:
 
         self.color = (rnd(0, 255), rnd(0, 255), rnd(0, 255))
 
+
         self.flicks = []
         for k in range(1, 5):
             self.flicks.append(pg.transform.scale(pg.image.load(f"images/flicks/flick{k}.png"), (self.size, self.size)))
         self.draw_flick = 0
         self.flick_add = 1
 
-        tank_ind = rnd(1, 5)
-        self.main_imgs = [pg.transform.scale(pg.image.load(f"images/tanks/bad/tank{tank_ind}{3}.png"), (self.size, self.size)),
-                          pg.transform.scale(pg.image.load(f"images/tanks/bad/tank{tank_ind}{4}.png"), (self.size, self.size)) ]
+        self.tank_ind = rnd(2, 5)
+        self.bot_cost = self.settings.bots_costs[self.tank_ind - 2]
+        self.main_imgs = [pg.transform.scale(pg.image.load(f"images/tanks/bad/tank{self.tank_ind}{3}.png"), (self.size, self.size)),
+                          pg.transform.scale(pg.image.load(f"images/tanks/bad/tank{self.tank_ind}{4}.png"), (self.size, self.size)) ]
 
         self.blink = not rnd(0, 6) == 3
         self.draw_img = self.main_imgs[0]

@@ -3,9 +3,11 @@ from bonuses import Bonus
 import winsound
 
 class Bullet:
-    def __init__(self, settings, pos, move, team, speed):
+    def __init__(self, settings, pos, move, team, speed, ind = -1):
         self.surf = settings.main_surf
         self.settings = settings
+
+        self.ind = ind
 
         self.team = team
 
@@ -63,7 +65,9 @@ class Bullet:
                     if not bot_el.blink:
                         self.settings.bonuses.append(Bonus(self.settings))
                         winsound.PlaySound("music/bonus_created.wav", winsound.SND_ASYNC)
-                    self.settings.tanks_bangs.append([bot_el.x + bot_el.size // 2, bot_el.y + bot_el.size // 2, 1, 0, 1])
+                    self.settings.tanks_bangs.append([bot_el.x + bot_el.size // 2, bot_el.y + bot_el.size // 2, 1, 0, bot_el.bot_cost])
+                    self.settings.enemies_killed[self.ind - 1][bot_el.tank_ind - 2] += 1
+
                     return True
         if self.team == 2:
             for tank in self.settings.tanks:
