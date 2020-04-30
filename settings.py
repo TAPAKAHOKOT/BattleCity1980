@@ -18,7 +18,7 @@ class Settings:
 
         self.levels = None
 
-        self.cur_level = 2
+        self.cur_level = 4
 
         self.enemies_at_level = 20
         self.bots_spawned = 0
@@ -48,7 +48,7 @@ class Settings:
 
         self.tanks_speed = [7, 6, 5, 5]
         self.tanks_force = [1, 2, 3, 3]
-        self.tanks_fire_rate = [7, 8, 10, 12]
+        self.tanks_fire_rate = [7, 8, 5, 10]
         self.tanks_bullets_speed = [14, 18, 12, 10]
         self.tanks_health = [1, 1, 2, 2]
 
@@ -72,7 +72,10 @@ class Settings:
         self.main_counter = 0
         self.stop_interval = -1
 
-        self.hpfont = font.SysFont('System', int(45))
+        self.hpfont = font.Font("D:/pycharm_progects/bold_pixel_font.ttf", int(22))
+        self.points_font = font.Font("D:/pycharm_progects/pixel_font.ttf", int(24))
 
         self.mini_tank = transform.scale(image.load("images/mini_tank.png"), (24, 24))
+
+        self.score = 0
 

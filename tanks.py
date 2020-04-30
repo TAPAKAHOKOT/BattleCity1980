@@ -85,7 +85,7 @@ class Tank:
                (40 < (self.y + step[1]) < self.settings.win_height - 75)
 
 
-        self.test_rect = pg.Rect((self.x + step[0] // 2 + 5, self.y + step[1] // 2 + 5, self.size - 10, self.size - 10))
+        self.test_rect = pg.Rect((self.x + step[0] + 5, self.y + step[1] + 5, self.size - 10, self.size - 10))
 
         # test = pg.draw.rect(self.settings.main_surf, (255, 0, 0), self.test_rect, 1)
 
@@ -127,7 +127,7 @@ class Tank:
                              50 + self.settings.cells_size * self.y - int(self.settings.cells_size * 1.3) // 2
             self.start_counter = 0
 
-            self.def_counter = self.counter + 60
+            self.def_counter = self.main_counter + 60
             self.defeat_on = True
 
     def respawn(self):

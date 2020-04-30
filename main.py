@@ -18,7 +18,7 @@ pg.init()
 settings = Settings()
 settings.staying_sound.play(loops=-1)
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (-1500, 0)
+os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (300, -30)
 
 screen = pg.display.set_mode(settings.win_size, flags=pg.DOUBLEBUF)
 surf = pg.Surface(settings.win_size)
@@ -103,7 +103,6 @@ def init_game():
 init_game()
 
 settings.tanks = [Tank(settings, 1), Tank(settings, 2)]
-
 
 while True:
     settings.main_surf.fill(settings.win_bg)
@@ -216,8 +215,6 @@ while True:
 
     for bang in settings.bangs:
 
-        settings.main_surf.blit(settings.booms[bang[2] - 1], (bang[0] - settings.cells_size, bang[1] - settings.cells_size))
-
         bang[3] += 1
         if bang[3] % anim_speed == 0:
             bang[2] += 1
@@ -226,8 +223,23 @@ while True:
             settings.bangs.pop(settings.bangs.index(bang))
 
     for bang in settings.tanks_bangs:
+
+        text = settings.points_font.render(f"200", True, (255, 255, 255))
+
+        test_surf = pg.Surface(text.get_size(), pg.SRCALPHA)
+        test_surf.fill((255, 255, 255, int(255 * ((20 - bang[3]) / 20))))
+
+        text.blit(test_surf, (0, 0), special_flags=pg.BLEND_RGBA_MULT)
+        settings.score += 200
+
+
+        settings.main_surf.blit(settings.booms[bang[2] - 1],
+                                (bang[0] - settings.cells_size, bang[1] - settings.cells_size))
+
         settings.main_surf.blit(settings.big_booms[bang[2] - 1],
                                 (bang[0] - settings.cells_size * 2, bang[1] - settings.cells_size * 2))
+
+        settings.main_surf.blit(text, text.get_rect(center=(bang[0], bang[1] - bang[3])))
 
         bang[3] += 1
         if bang[3] % anim_speed == 0:
@@ -246,7 +258,7 @@ while True:
         block.draw()
 
     text = settings.hpfont.render(f"I P", True, (0, 0, 0))
-    settings.main_surf.blit(text, text.get_rect(center=(settings.win_width - 25, settings.win_height // 2 - 70)))
+    settings.main_surf.blit(text, text.get_rect(center=(settings.win_width - 25, settings.win_height // 2 - 60)))
     text = settings.hpfont.render(f"{settings.tanks[0].health}", True, (0, 0, 0))
     settings.main_surf.blit(text, text.get_rect(center=(settings.win_width - 25, settings.win_height // 2 -30)))
 
@@ -254,7 +266,7 @@ while True:
     text = settings.hpfont.render(f"II P", True, (0, 0, 0))
     settings.main_surf.blit(text, text.get_rect(center=(settings.win_width - 25, settings.win_height // 2 + 30)))
     text = settings.hpfont.render(f"{settings.tanks[1].health}", True, (0, 0, 0))
-    settings.main_surf.blit(text, text.get_rect(center=(settings.win_width - 25, settings.win_height // 2 + 70)))
+    settings.main_surf.blit(text, text.get_rect(center=(settings.win_width - 25, settings.win_height // 2 + 60)))
 
     settings.screen.blit(settings.main_surf, (0, 0))
 
