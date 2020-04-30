@@ -13,6 +13,8 @@ from water import Water
 from bot import Bot
 from random import randint as rnd
 
+
+hhhh
 pg.init()
 
 settings = Settings()
