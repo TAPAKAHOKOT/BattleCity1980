@@ -139,6 +139,7 @@ while True:
                 for k in range(2):
                     for i in range(4):
                         field[y][x].append([k, i])
+
         elif chosen_num == 3:
             if field[y][x] == 0:
                 field[y][x] = [[x_d // (cells_size // 2), y_d // (cells_size // 4)]]

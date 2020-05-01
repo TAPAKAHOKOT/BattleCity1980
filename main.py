@@ -1,4 +1,3 @@
-import winsound
 
 import pygame as pg
 import os
@@ -12,16 +11,22 @@ from fin import  Fin
 from water import Water
 from bot import Bot
 from random import randint as rnd
+import keyboard as kb
+from threading import Thread
+import winsound as ws
+
+
 
 pg.init()
+pg.display.init()
 
 settings = Settings()
 settings.staying_sound.play(loops=-1)
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (300, -30)
+os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (500, -30)
 
-screen = pg.display.set_mode(settings.win_size, flags=pg.DOUBLEBUF)
-surf = pg.Surface(settings.win_size)
+screen = pg.display.set_mode((1920, 1080), flags=pg.DOUBLEBUF | pg.FULLSCREEN)
+surf = pg.Surface((1920, 1080))
 
 settings.screen = screen
 settings.main_surf = surf
@@ -104,7 +109,10 @@ init_game()
 
 
 def new_level():
-    settings.field = deepcopy(settings.levels[str(settings.cur_level)])
+    if settings.cur_level > settings.levels_num:
+        settings.field = deepcopy((settings.levels[str( (settings.cur_level - 1) % (settings.levels_num - 1) + 1)]))
+    else:
+        settings.field = deepcopy((settings.levels[str((settings.cur_level - 1) % settings.levels_num + 1)]))
 
     settings.bots_spawn_counter = 0
     settings.bots_spawner_speed = 150
@@ -123,6 +131,14 @@ def new_level():
     settings.bonuses = []
     init_game()
 
+
+    big_bot = settings.cur_level // 3.5
+    small_bot = rnd(0, 20 - big_bot)
+    medium_bot = rnd(0, 20 - big_bot - small_bot)
+    third_bot = 20 - big_bot - small_bot - medium_bot
+
+    settings.bots_nums = [small_bot, medium_bot, third_bot, big_bot]
+
     [tank.respawn() for tank in settings.tanks]
 
 def show_score():
@@ -130,6 +146,13 @@ def show_score():
 
     text = settings.score_font.render(f"STAGE {settings.cur_level}", True, (255, 255, 255))
     settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2, 100)))
+
+    file = open("record", "r")
+    score = file.read()
+    file.close()
+
+    text = settings.score_font.render(f"BEST SCORE {score}", True, (255, 255, 150))
+    settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2, 150)))
 
     text = settings.score_font.render(f"I-PLAYER", True, (220, 60, 0))
     settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 140, 200)))
@@ -177,8 +200,8 @@ def show_score():
 
 
     if settings.main_counter % 4 == 0 and settings.p < 4:
-
-        winsound.PlaySound("music/blink.wav", winsound.SND_ASYNC)
+        # settings.blink_audio.play()
+        ws.PlaySound("music/blink.wav", ws.SND_ASYNC)
 
         t = True
         if settings.killed[0][settings.p] < settings.enemies_killed[0][settings.p]:
@@ -230,7 +253,9 @@ def show_stage():
 
 settings.tanks = [Tank(settings, 1), Tank(settings, 2)]
 
-while True:
+pg.mouse.set_pos(-100, 0)
+
+while settings.run_game:
     settings.main_surf.fill(settings.win_bg)
 
     clock.tick(settings.win_fps)
@@ -269,15 +294,21 @@ while True:
 
         if not 50 < bullet.x < settings.win_width - 50:
             bullet.settings.bangs.append([bullet.x - bullet.x_v, bullet.y - bullet.y_v, 1, 0, 1])
-            settings.bullets.pop(settings.bullets.index(bullet))
+            try:
+                settings.bullets.pop(settings.bullets.index(bullet))
+            except: pass
             if bullet.team == 1:
-                winsound.PlaySound("music/past_shoot.wav", winsound.SND_ASYNC)
+                # settings.past_shoot_audio.play()
+                ws.PlaySound("music/past_shoot.wav", ws.SND_ASYNC)
+
         if not 50 < bullet.y < settings.win_height - 50:
-            settings.bullets.pop(settings.bullets.index(bullet))
+            try:
+                settings.bullets.pop(settings.bullets.index(bullet))
+            except: pass
             bullet.settings.bangs.append([bullet.x - bullet.x_v, bullet.y - bullet.y_v, 1, 0, 1])
             if bullet.team == 1:
-                winsound.PlaySound("music/past_shoot.wav", winsound.SND_ASYNC)
-
+                # settings.past_shoot_audio.play()
+                 ws.PlaySound("music/past_shoot.wav", ws.SND_ASYNC)
     for tank in settings.tanks:
         tank.update()
         tank.draw()
@@ -300,7 +331,14 @@ while True:
 
     if (settings.bots_spawn_counter % settings.bots_spawner_speed == 0
             and settings.bots_spawned < settings.enemies_at_level) or settings.bots_spawn_counter == 5:
-        settings.bots.append(Bot(settings))
+
+        while True:
+            bot_index = rnd(0, 3)
+            if settings.bots_nums[bot_index] != 0:
+                break
+        settings.bots_nums[bot_index] -= 1
+        settings.bots.append(Bot(settings, bot_index))
+
         settings.bots_spawner_speed -= 3
         settings.bots_spawned += 1
 
@@ -308,9 +346,16 @@ while True:
         block.draw()
 
 
+    if (settings.tanks[0].health + settings.tanks[1].health) == 0:
+        settings.enemies_left = 0
+        settings.cur_level = 0
+        settings.stop_game = True
+
     anim_speed = 3
 
     for bang in settings.bangs:
+        settings.main_surf.blit(settings.booms[bang[2] - 1],
+                                (bang[0] - settings.cells_size, bang[1] - settings.cells_size))
 
         bang[3] += 1
         if bang[3] % anim_speed == 0:
@@ -320,9 +365,6 @@ while True:
             settings.bangs.pop(settings.bangs.index(bang))
 
     for bang in settings.tanks_bangs:
-
-        settings.main_surf.blit(settings.booms[bang[2] - 1],
-                                (bang[0] - settings.cells_size, bang[1] - settings.cells_size))
 
         settings.main_surf.blit(settings.big_booms[bang[2] - 1],
                                 (bang[0] - settings.cells_size * 2, bang[1] - settings.cells_size * 2))
@@ -375,12 +417,28 @@ while True:
             settings.end_level_wait = settings.main_counter + 180
         if settings.main_counter > settings.end_level_wait:
             if settings.start_storage_show == 0:
-                settings.start_storage_show = settings.main_counter + 80
-                settings.cur_level += 1
-                winsound.PlaySound("music/battle-city-dendi.wav", winsound.SND_ASYNC)
+                if settings.stop_game:
+
+                    kb.wait("enter")
+                    settings.run_game = False
+
+                else:
+                    settings.start_storage_show = settings.main_counter + 80
+                    settings.cur_level += 1
+                    # settings.spawn_audio.play()   198 168 0 14
+                    ws.PlaySound("music/battle-city-dendi.wav", ws.SND_ASYNC)
+
             if settings.main_counter <= settings.start_storage_show:
                 show_stage()
             else:
+                record_file = open("record", "r")
+                score = int(record_file.read())
+                record_file.close()
+
+                if settings.score[0] + settings.score[1] > score:
+                    file = open("record", "w")
+                    file.write(str(settings.score[0] + settings.score[1]))
+                    file.close()
                 settings.enemies_killed = [[0, 0, 0, 0], [0, 0, 0, 0]]
                 settings.start_score_show = 0
                 settings.start_storage_show = 0
@@ -401,7 +459,7 @@ while True:
 
 
 
-    settings.screen.blit(settings.main_surf, (0, 0))
+    settings.screen.blit(settings.main_surf, (406, -14))
 
     for event in pg.event.get():
         if event.type == pg.KEYDOWN:

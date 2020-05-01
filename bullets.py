@@ -1,6 +1,6 @@
 import pygame as pg
 from bonuses import Bonus
-import winsound
+import winsound as ws
 
 class Bullet:
     def __init__(self, settings, pos, move, team, speed, ind = -1):
@@ -52,29 +52,45 @@ class Bullet:
 
         for block in self.settings.armor:
             if self.rect.clip(block.draw_rect):
-                winsound.PlaySound("music/past_shoot.wav", winsound.SND_ASYNC)
+                # self.settings.past_shoot_audio.play()
+                ws.PlaySound("music/past_shoot.wav", ws.SND_ASYNC)
                 self.settings.bangs.append([self.x - self.x_v, self.y - self.y_v, 1, 0, 1])
                 return True
 
         if self.team == 1:
             for bot_el in self.settings.bots:
-                if self.check_rect.clip(bot_el.rect):
-                    self.settings.bots.pop(self.settings.bots.index(bot_el))
-                    self.settings.enemies_left -= 1
-                    winsound.PlaySound("music/bot_boom.wav", winsound.SND_ASYNC)
-                    if not bot_el.blink:
-                        self.settings.bonuses.append(Bonus(self.settings))
-                        winsound.PlaySound("music/bonus_created.wav", winsound.SND_ASYNC)
-                    self.settings.tanks_bangs.append([bot_el.x + bot_el.size // 2, bot_el.y + bot_el.size // 2, 1, 0, bot_el.bot_cost])
-                    self.settings.enemies_killed[self.ind - 1][bot_el.tank_ind - 2] += 1
-                    self.settings.score[self.ind - 1] += bot_el.bot_cost
-
+                if self.check_rect.clip(bot_el.rect) and bot_el.start_counter > bot_el.settings.spawn_time:
+                    bot_el.hp -= 1
+                    if bot_el.hp == 0:
+                        self.settings.bots.pop(self.settings.bots.index(bot_el))
+                        self.settings.enemies_left -= 1
+                        # self.settings.bot_boom_audio.play()
+                        ws.PlaySound("music/bot_boom.wav", ws.SND_ASYNC)
+                        if not bot_el.blink:
+                            self.settings.bonuses.append(Bonus(self.settings))
+                            # self.settings.bonus_created_audio.play()
+                        self.settings.tanks_bangs.append([bot_el.x + bot_el.size // 2, bot_el.y + bot_el.size // 2, 1, 0, bot_el.bot_cost])
+                        self.settings.bangs.append([self.x - self.x_v, self.y - self.y_v, 1, 0, 1])
+                        self.settings.enemies_killed[self.ind - 1][bot_el.tank_ind - 2] += 1
+                        self.settings.score[self.ind - 1] += bot_el.bot_cost
+                    else:
+                        # self.settings.bim_audio.play()
+                        ws.PlaySound("music/bim.wav", ws.SND_ASYNC)
                     return True
         if self.team == 2:
             for tank in self.settings.tanks:
                 if self.check_rect.clip(tank.rect):
                     if tank.start_counter > self.settings.spawn_time:
                         tank.death()
+
+            for block in self.settings.fin:
+                if self.rect.clip(block.draw_rect):
+                    # self.settings.death_audio.play()
+                    ws.PlaySound("music/death.wav", ws.SND_ASYNC)
+                    self.settings.enemies_left = 0
+                    self.settings.fin.pop(self.settings.fin.index(block))
+                    self.settings.stop_game = True
+                    return True
         return False
 
     def update(self):

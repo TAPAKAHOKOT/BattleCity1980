@@ -7,7 +7,7 @@ from random import choice
 
 
 class Bot:
-    def __init__(self, settings):
+    def __init__(self, settings, tank_ind):
         self.settings = settings
 
         self.size = (int(self.settings.cells_size * 1.3))
@@ -24,7 +24,7 @@ class Bot:
         self.move = [0, 0, 0, 0]
         self.angle = 0
 
-        self.speed = 5
+        self.speed = self.settings.bots_speed[tank_ind]
 
         self.color = (rnd(0, 255), rnd(0, 255), rnd(0, 255))
 
@@ -35,12 +35,26 @@ class Bot:
         self.draw_flick = 0
         self.flick_add = 1
 
-        self.tank_ind = rnd(2, 5)
+        self.tank_ind = tank_ind + 2
         self.bot_cost = self.settings.bots_costs[self.tank_ind - 2]
-        self.main_imgs = [pg.transform.scale(pg.image.load(f"images/tanks/bad/tank{self.tank_ind}{3}.png"), (self.size, self.size)),
-                          pg.transform.scale(pg.image.load(f"images/tanks/bad/tank{self.tank_ind}{4}.png"), (self.size, self.size)) ]
 
-        self.blink = not rnd(0, 6) == 3
+        if self.tank_ind == 5:
+            self.main_imgs = []
+            for k in [1, 2, 4]:
+                self.main_imgs.append(pg.transform.scale(pg.image.load(f"images/tanks/bad/tank5{k}.png"), (self.size, self.size)))
+            self.hp = 3
+        else:
+            self.main_imgs = [pg.transform.scale(pg.image.load(f"images/tanks/bad/tank{self.tank_ind}{3}.png"), (self.size, self.size)),
+                          pg.transform.scale(pg.image.load(f"images/tanks/bad/tank{self.tank_ind}{4}.png"), (self.size, self.size))]
+            self.hp = 1
+
+        self.blink = not rnd(0, 4) == 3
+        if not self.blink and self.tank_ind == 5:
+            self.main_imgs = []
+            for k in [3, 1, 4]:
+                self.main_imgs.append(
+                    pg.transform.scale(pg.image.load(f"images/tanks/bad/tank5{k}.png"), (self.size, self.size)))
+
         self.draw_img = self.main_imgs[0]
 
         self.counter = 0
@@ -68,7 +82,11 @@ class Bot:
     def draw(self):
         if self.start_counter > self.settings.spawn_time:
 
-            if self.blink:
+            if self.tank_ind == 5 and not self.blink:
+                t = (3 - self.hp) if self.counter % 8 < 4 else 2
+            elif self.tank_ind == 5:
+                t = 3 - self.hp
+            elif self.blink:
                 t = 1
             else:
                 t = 0 if self.counter % 8 < 4 else 1

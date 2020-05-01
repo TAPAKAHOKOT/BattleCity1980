@@ -1,7 +1,8 @@
 import pygame as pg
 from random import randint as rnd
 from bullets import Bullet
-import winsound
+import winsound as ws
+from threading import Thread
 
 class Tank:
     def __init__(self, settings, ind):
@@ -74,6 +75,9 @@ class Tank:
         if self.tank_level < 4:
             self.tank_level += 1
 
+            self.speed = self.settings.tanks_speed[self.tank_level - 1]
+            self.fire_rate = self.settings.tanks_fire_rate[self.tank_level - 1]
+
             self.main_img = pg.transform.scale(pg.image.load(f"images/tanks/good/tank{self.tank_level}{self.ind}.png"),
                                                (self.size, self.size))
     def add_hp(self):
@@ -109,7 +113,10 @@ class Tank:
     def fire(self):
 
         if self.counter > self.fire_rate and self.start_counter > self.settings.spawn_time:
-            winsound.PlaySound("music/fire.wav", winsound.SND_ASYNC)
+            # self.settings.fire_audio.play()
+            # self.settings.fire_sound.play()
+            ws.PlaySound("music/fire.wav", ws.SND_ASYNC)
+
 
             self.settings.bullets.append(Bullet(self.settings, (self.x, self.y), self.bullet_move, 1,
                                                 self.settings.tanks_bullets_speed[self.tank_level - 1], self.ind))
@@ -120,7 +127,8 @@ class Tank:
             self.settings.tanks_bangs.append(
                 [self.x + self.size // 2, self.y + self.size // 2, 1, 0, 0])
 
-            winsound.PlaySound("music/death.wav", winsound.SND_ASYNC)
+            # self.settings.death_audio.play()
+            ws.PlaySound("music/death.wav", ws.SND_ASYNC)
 
             self.health -= 1
 

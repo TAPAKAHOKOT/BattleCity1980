@@ -1,8 +1,7 @@
-import winsound
 
 from pygame import transform, image, Rect
 from random import randint as rnd, choice
-
+import winsound as ws
 
 class Bonus:
     def __init__(self, settings):
@@ -50,33 +49,39 @@ class Bonus:
 
         if self.bonus_index == 1:
             # Get armor
-            winsound.PlaySound("music/bomb_bonus.wav", winsound.SND_ASYNC)
-            self.settings.tanks[tank_ind - 1].def_counter = self.settings.tanks[tank_ind - 1].counter + 100
+            # self.settings.bonus_audio.play()
+            ws.PlaySound("music/bomb_bonus.wav", ws.SND_ASYNC)
+            self.settings.tanks[tank_ind - 1].def_counter = self.settings.tanks[tank_ind - 1].main_counter + 140
             self.settings.tanks[tank_ind - 1].defeat_on = True
+            print(1)
 
         if self.bonus_index == 2:
             # Stop time
-            winsound.PlaySound("music/bomb_bonus.wav", winsound.SND_ASYNC)
-            self.settings.stop_interval = self.settings.main_counter + 80
+            # self.settings.bonus_audio.play()
+            ws.PlaySound("music/bomb_bonus.wav", ws.SND_ASYNC)
+            self.settings.stop_interval = self.settings.main_counter + 140
 
         if self.bonus_index == 3:
             # Get armor for spawn
-            winsound.PlaySound("music/bomb_bonus.wav", winsound.SND_ASYNC)
-            pass
+            # self.settings.bonus_audio.play()
+            ws.PlaySound("music/bomb_bonus.wav", ws.SND_ASYNC)
 
         if self.bonus_index == 4:
             # Get lvl
-            winsound.PlaySound("music/bomb_bonus.wav", winsound.SND_ASYNC)
+            # self.settings.bonus_audio.play()
+            ws.PlaySound("music/bomb_bonus.wav", ws.SND_ASYNC)
             self.settings.tanks[tank_ind - 1].add_level()
 
         if self.bonus_index == 5:
             # Bomb all enemies
-            winsound.PlaySound("music/bomb_bonus.wav", winsound.SND_ASYNC)
+            # self.settings.bonus_audio.play()
+            ws.PlaySound("music/bomb_bonus.wav", ws.SND_ASYNC)
             self.settings.enemies_left -= len(self.settings.bots)
 
             score_to_add = 0
             for bot_el in self.settings.bots:
-                winsound.PlaySound("music/bot_boom.wav", winsound.SND_ASYNC)
+                # self.settings.bot_boom_audio.play()
+                ws.PlaySound("music/bot_boom.wav", ws.SND_ASYNC)
                 self.settings.tanks_bangs.append([bot_el.x + bot_el.size // 2, bot_el.y + bot_el.size // 2, 1, 0, bot_el.bot_cost])
                 score_to_add += bot_el.bot_cost
 
@@ -90,7 +95,8 @@ class Bonus:
 
         if self.bonus_index == 6:
             # Get hp
-            winsound.PlaySound("music/health_bonus.wav", winsound.SND_ASYNC)
+            # self.settings.hp_bonus_audio.play()
+            ws.PlaySound("music/health_bonus.wav", ws.SND_ASYNC)
             self.settings.tanks[tank_ind - 1].add_hp()
 
         if self.bonus_index == 7:
