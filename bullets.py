@@ -53,7 +53,8 @@ class Bullet:
         for block in self.settings.armor:
             if self.rect.clip(block.draw_rect):
                 # self.settings.past_shoot_audio.play()
-                ws.PlaySound("music/past_shoot.wav", ws.SND_ASYNC)
+                # ws.PlaySound("music/past_shoot.wav", ws.SND_ASYNC)
+                self.settings.past_shoot_sound.play()
                 self.settings.bangs.append([self.x - self.x_v, self.y - self.y_v, 1, 0, 1])
                 return True
 
@@ -65,7 +66,9 @@ class Bullet:
                         self.settings.bots.pop(self.settings.bots.index(bot_el))
                         self.settings.enemies_left -= 1
                         # self.settings.bot_boom_audio.play()
-                        ws.PlaySound("music/bot_boom.wav", ws.SND_ASYNC)
+                        # ws.PlaySound("music/bot_boom.wav", ws.SND_ASYNC)
+                        self.settings.bot_boom_sound.play()
+
                         if not bot_el.blink:
                             self.settings.bonuses.append(Bonus(self.settings))
                             # self.settings.bonus_created_audio.play()
@@ -75,7 +78,8 @@ class Bullet:
                         self.settings.score[self.ind - 1] += bot_el.bot_cost
                     else:
                         # self.settings.bim_audio.play()
-                        ws.PlaySound("music/bim.wav", ws.SND_ASYNC)
+                        # ws.PlaySound("music/bim.wav", ws.SND_ASYNC)
+                        self.settings.bim_sound.play()
                     return True
         if self.team == 2:
             for tank in self.settings.tanks:
@@ -86,7 +90,8 @@ class Bullet:
             for block in self.settings.fin:
                 if self.rect.clip(block.draw_rect):
                     # self.settings.death_audio.play()
-                    ws.PlaySound("music/death.wav", ws.SND_ASYNC)
+                    # ws.PlaySound("music/death.wav", ws.SND_ASYNC)
+                    self.settings.death_sound.play()
                     self.settings.enemies_left = 0
                     self.settings.fin.pop(self.settings.fin.index(block))
                     self.settings.stop_game = True

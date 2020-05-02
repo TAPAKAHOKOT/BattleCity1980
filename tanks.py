@@ -116,7 +116,7 @@ class Tank:
             # self.settings.fire_audio.play()
             # self.settings.fire_sound.play()
             ws.PlaySound("music/fire.wav", ws.SND_ASYNC)
-
+            # self.settings.fire_sound.play()
 
             self.settings.bullets.append(Bullet(self.settings, (self.x, self.y), self.bullet_move, 1,
                                                 self.settings.tanks_bullets_speed[self.tank_level - 1], self.ind))
@@ -128,7 +128,8 @@ class Tank:
                 [self.x + self.size // 2, self.y + self.size // 2, 1, 0, 0])
 
             # self.settings.death_audio.play()
-            ws.PlaySound("music/death.wav", ws.SND_ASYNC)
+            # ws.PlaySound("music/death.wav", ws.SND_ASYNC)
+            self.settings.death_sound.play()
 
             self.health -= 1
 

@@ -20,6 +20,12 @@ import winsound as ws
 pg.init()
 pg.display.init()
 
+js_0 = pg.joystick.Joystick(0)
+js_0.init()
+
+js_1 = pg.joystick.Joystick(1)
+js_1.init()
+
 settings = Settings()
 settings.staying_sound.play(loops=-1)
 
@@ -147,6 +153,15 @@ def show_score():
     text = settings.score_font.render(f"STAGE {settings.cur_level}", True, (255, 255, 255))
     settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2, 100)))
 
+    record_file = open("record", "r")
+    score = int(record_file.read())
+    record_file.close()
+
+    if settings.score[0] + settings.score[1] > score:
+        file = open("record", "w")
+        file.write(str(settings.score[0] + settings.score[1]))
+        file.close()
+
     file = open("record", "r")
     score = file.read()
     file.close()
@@ -202,6 +217,7 @@ def show_score():
     if settings.main_counter % 4 == 0 and settings.p < 4:
         # settings.blink_audio.play()
         ws.PlaySound("music/blink.wav", ws.SND_ASYNC)
+        # settings.blink_sound.play()
 
         t = True
         if settings.killed[0][settings.p] < settings.enemies_killed[0][settings.p]:
@@ -299,7 +315,8 @@ while settings.run_game:
             except: pass
             if bullet.team == 1:
                 # settings.past_shoot_audio.play()
-                ws.PlaySound("music/past_shoot.wav", ws.SND_ASYNC)
+                # ws.PlaySound("music/past_shoot.wav", ws.SND_ASYNC)
+                settings.past_shoot_sound.play()
 
         if not 50 < bullet.y < settings.win_height - 50:
             try:
@@ -308,7 +325,8 @@ while settings.run_game:
             bullet.settings.bangs.append([bullet.x - bullet.x_v, bullet.y - bullet.y_v, 1, 0, 1])
             if bullet.team == 1:
                 # settings.past_shoot_audio.play()
-                 ws.PlaySound("music/past_shoot.wav", ws.SND_ASYNC)
+                #  ws.PlaySound("music/past_shoot.wav", ws.SND_ASYNC)
+                settings.past_shoot_sound.play()
     for tank in settings.tanks:
         tank.update()
         tank.draw()
@@ -346,7 +364,7 @@ while settings.run_game:
         block.draw()
 
 
-    if (settings.tanks[0].health + settings.tanks[1].health) == 0:
+    if (settings.tanks[0].health + settings.tanks[1].health) == 0 and settings.enemies_left != 0:
         settings.enemies_left = 0
         settings.cur_level = 0
         settings.stop_game = True
@@ -426,7 +444,8 @@ while settings.run_game:
                     settings.start_storage_show = settings.main_counter + 80
                     settings.cur_level += 1
                     # settings.spawn_audio.play()   198 168 0 14
-                    ws.PlaySound("music/battle-city-dendi.wav", ws.SND_ASYNC)
+                    # ws.PlaySound("music/battle-city-dendi.wav", ws.SND_ASYNC)
+                    settings.spawn_sound.play()
 
             if settings.main_counter <= settings.start_storage_show:
                 show_stage()
@@ -461,6 +480,81 @@ while settings.run_game:
 
     settings.screen.blit(settings.main_surf, (406, -14))
 
+    if not settings.wait:
+        j0_left_right = js_0.get_axis(0)
+        if round(j0_left_right) == 1:
+            settings.tanks[1].move = [1, 0, 0, 0]
+            # print("right")
+
+        elif round(j0_left_right) == -1:
+            settings.tanks[1].move = [0, 1, 0, 0]
+            # print("left")
+
+        elif round(j0_left_right) == 0:
+            settings.tanks[1].move[0], settings.tanks[1].move[1] = 0, 0
+
+        j0_up_down = js_0.get_axis(1)
+        if round(j0_up_down) == 1:
+            settings.tanks[1].move = [0, 0, 1, 0]
+            # print("down")
+
+        elif round(j0_up_down) == -1:
+            settings.tanks[1].move = [0, 0, 0, 1]
+            # print("up")
+
+        elif round(j0_up_down) == 0:
+            settings.tanks[1].move[2], settings.tanks[1].move[3] = 0, 0
+
+        fire_button = js_0.get_button(0)
+        if fire_button:
+            settings.tanks[1].fire()
+
+
+
+        j1_left_right = js_1.get_axis(0)
+        if round(j1_left_right) == 1:
+            settings.tanks[0].move = [1, 0, 0, 0]
+            # print("right")
+
+        elif round(j1_left_right) == -1:
+            settings.tanks[0].move = [0, 1, 0, 0]
+            # print("left")
+
+        elif round(j1_left_right) == 0:
+            settings.tanks[0].move[0], settings.tanks[0].move[1] = 0, 0
+
+        j1_up_down = js_1.get_axis(1)
+        if round(j1_up_down) == 1:
+            settings.tanks[0].move = [0, 0, 1, 0]
+            # print("down")
+
+        elif round(j1_up_down) == -1:
+            settings.tanks[0].move = [0, 0, 0, 1]
+            # print("up")
+
+        elif round(j1_up_down) == 0:
+            settings.tanks[0].move[2], settings.tanks[0].move[3] = 0, 0
+
+        fire_button = js_1.get_button(0)
+        if fire_button:
+            settings.tanks[0].fire()
+
+
+        if abs(round(j1_up_down)) + abs(round(j1_left_right)) + abs(round(j0_up_down)) + abs(round(j0_left_right)) != 0:
+            if settings.stay:
+                settings.moving_sound.play(loops=-1)
+                settings.stay = False
+                settings.staying_sound.stop()
+        else:
+            if not settings.stay:
+                settings.staying_sound.play(loops=-1)
+                settings.moving_sound.stop()
+                settings.stay = True
+    else:
+        settings.staying_sound.stop()
+        settings.moving_sound.stop()
+
+
     for event in pg.event.get():
         if event.type == pg.KEYDOWN:
             if event.key == 27:
@@ -469,8 +563,9 @@ while settings.run_game:
 
             if not settings.wait:
                 if event.key in [97, 100, 115, 119]:
-                    settings.moving_sound.play(loops=-1)
-                    settings.staying_sound.stop()
+                    # settings.moving_sound.play(loops=-1)
+                    # settings.staying_sound.stop()
+                    pass
 
                 if event.key == 119:
                     settings.tanks[0].move = [0, 0, 0, 1]
@@ -506,14 +601,10 @@ while settings.run_game:
             if event.key in [97, 100, 115, 119]:
                 settings.tanks[0].move = [0, 0, 0, 0]
 
-                settings.staying_sound.play(loops=-1)
-                settings.moving_sound.stop()
+                # settings.staying_sound.play(loops=-1)
+                # settings.moving_sound.stop()
 
             if event.key in [102, 103, 104, 116]:
                 settings.tanks[1].move = [0, 0, 0, 0]
 
     pg.display.update()
-
-
-
-

@@ -20,7 +20,7 @@ class Settings:
         self.levels = None
 
         self.cur_level = 1
-        self.levels_num = 8
+        self.levels_num = 14
 
         self.enemies_at_level = 20
         self.bots_spawned = 0
@@ -121,3 +121,17 @@ class Settings:
         # self.bim_audio = sa.WaveObject.from_wave_file("music/bim.wav")
         # self.bonus_audio = sa.WaveObject.from_wave_file("music/bomb_bonus.wav")
         # self.hp_bonus_audio = sa.WaveObject.from_wave_file("music/health_bonus.wav")
+
+        self.fire_sound = mixer.Sound("music/fire.wav")
+        self.spawn_sound = mixer.Sound("music/battle-city-dendi.wav")
+        self.blink_sound = mixer.Sound("music/blink.wav")
+        self.past_shoot_sound = mixer.Sound("music/past_shoot.wav")
+        self.death_sound = mixer.Sound("music/death.wav")
+        self.bot_boom_sound = mixer.Sound("music/bot_boom.wav")
+        self.bonus_created_sound = mixer.Sound("music/bonus_created.wav")
+        self.bim_sound = mixer.Sound("music/bim.wav")
+        self.bonus_sound = mixer.Sound("music/bomb_bonus.wav")
+        self.hp_bonus_sound = mixer.Sound("music/health_bonus.wav")
+
+
+        self.stay = True

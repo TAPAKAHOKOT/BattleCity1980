@@ -46,7 +46,7 @@ def get_imgs():
     full_brick_img = pg.transform.scale(pg.image.load("images/brick.png"), (old_size * 2, old_size * 2))
     full_water_img = pg.transform.scale(pg.image.load("images/water.png"), (old_size * 2, old_size * 2))
     full_grass_img = pg.transform.scale(pg.image.load("images/grass.png"), (old_size * 2, old_size * 2))
-    water_img = pg.transform.scale(pg.image.load("images/water.jpg"), (cells_size, cells_size))
+    water_img = pg.transform.scale(pg.image.load("images/water2.jpg"), (cells_size, cells_size))
 
     enemies_spawn_img = pg.transform.scale(pg.image.load("images/flicks/flick3.png"), (cells_size * 2, cells_size * 2))
     enemies_little_spawn_img = pg.transform.scale(pg.image.load("images/flicks/flick1.png"), (cells_size * 2, cells_size * 2))
@@ -140,14 +140,15 @@ while True:
                     for i in range(4):
                         field[y][x].append([k, i])
 
-        elif chosen_num == 3:
+        elif chosen_num == 3 and (x < field_size and y < field_size):
             if field[y][x] == 0:
                 field[y][x] = [[x_d // (cells_size // 2), y_d // (cells_size // 4)]]
             elif type(field[y][x]) is list:
                 if [x_d // (cells_size // 2), y_d // (cells_size // 4)] not in field[y][x]:
                     field[y][x].append([x_d // (cells_size // 2), y_d // (cells_size // 4)])
         else:
-            field[y][x] = chosen_num
+            if x < field_size and y < field_size:
+                field[y][x] = chosen_num
 
     if wash:
         pos = pg.mouse.get_pos()
@@ -161,6 +162,8 @@ while True:
                 x_d, y_d = pos[0] - x * cells_size, pos[1] - y * cells_size
                 if [x_d // (cells_size // 2), y_d // (cells_size // 4)] in field[y][x]:
                     field[y][x].remove([x_d // (cells_size // 2), y_d // (cells_size // 4)])
+                if field[y][x] == []:
+                    field[y][x] = 0
             else:
                 field[y][x] = 0
         except:
