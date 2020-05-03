@@ -22,7 +22,7 @@ class Settings:
         self.cur_level = 1
         self.levels_num = 14
 
-        self.enemies_at_level = 20
+        self.enemies_at_level = 2
         self.bots_spawned = 0
         self.enemies_left = self.enemies_at_level
 
@@ -42,7 +42,7 @@ class Settings:
         self.spawns = []
         self.tanks = []
 
-        self.fin_pos = (0, 0)
+        self.fin_pos = []
         self.bots_spawn = []
 
         self.bangs = []
@@ -81,6 +81,7 @@ class Settings:
 
         self.hpfont = font.Font("D:/pycharm_progects/bold_pixel_font.ttf", int(22))
         self.points_font = font.Font("D:/pycharm_progects/pixel_font.ttf", int(24))
+        self.fps_font = font.Font("D:/pycharm_progects/pixel_font.ttf", int(16))
         self.score_font = font.Font("D:/pycharm_progects/bold_pixel_font.ttf", int(34))
 
         self.mini_tank = transform.scale(image.load("images/mini_tank.png"), (24, 24))
@@ -109,18 +110,6 @@ class Settings:
 
         self.run_game = True
         self.stop_game = False
-
-
-        # self.fire_audio = sa.WaveObject.from_wave_file("music/fire.wav")
-        # self.spawn_audio = sa.WaveObject.from_wave_file("music/battle-city-dendi.wav")
-        # self.blink_audio = sa.WaveObject.from_wave_file("music/blink.wav")
-        # self.past_shoot_audio = sa.WaveObject.from_wave_file("music/past_shoot.wav")
-        # self.death_audio = sa.WaveObject.from_wave_file("music/death.wav")
-        # self.bot_boom_audio = sa.WaveObject.from_wave_file("music/bot_boom.wav")
-        # self.bonus_created_audio = sa.WaveObject.from_wave_file("music/bonus_created.wav")
-        # self.bim_audio = sa.WaveObject.from_wave_file("music/bim.wav")
-        # self.bonus_audio = sa.WaveObject.from_wave_file("music/bomb_bonus.wav")
-        # self.hp_bonus_audio = sa.WaveObject.from_wave_file("music/health_bonus.wav")
 
         self.fire_sound = mixer.Sound("music/fire.wav")
         self.spawn_sound = mixer.Sound("music/battle-city-dendi.wav")

@@ -20,11 +20,15 @@ import winsound as ws
 pg.init()
 pg.display.init()
 
-js_0 = pg.joystick.Joystick(0)
-js_0.init()
 
-js_1 = pg.joystick.Joystick(1)
+joystick_num = pg.joystick.get_count()
+
+js_1 = pg.joystick.Joystick(0)
 js_1.init()
+
+if joystick_num > 1:
+    js_0 = pg.joystick.Joystick(1)
+    js_0.init()
 
 settings = Settings()
 settings.staying_sound.play(loops=-1)
@@ -102,7 +106,7 @@ def init_game():
                                             50 + settings.cells_size * y + add_nums[1] * settings.cells_size // 4), ind))
             elif column == 4:
                 settings.fin.append(Fin(settings.main_surf, settings.field_size, settings.cells_size, (x, y)))
-                settings.fin_pos = (x, y)
+                settings.fin_pos.append([x, y])
 
             elif column == 5:
                 settings.spawns.append([x, y])
@@ -172,8 +176,9 @@ def show_score():
     text = settings.score_font.render(f"I-PLAYER", True, (220, 60, 0))
     settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 140, 200)))
 
-    text = settings.score_font.render(f"II-PLAYER", True, (220, 60, 0))
-    settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 140, 200)))
+    if joystick_num > 1:
+        text = settings.score_font.render(f"II-PLAYER", True, (220, 60, 0))
+        settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 140, 200)))
 
 
     text = settings.score_font.render(f"SCORE", True, (220, 60, 0))
@@ -181,8 +186,10 @@ def show_score():
 
     text = settings.score_font.render(f"{settings.score[0]}", True, (255, 255, 255))
     settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 140, 305)))
-    text = settings.score_font.render(f"{settings.score[1]}", True, (255, 255, 255))
-    settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 140, 305)))
+
+    if joystick_num > 1:
+        text = settings.score_font.render(f"{settings.score[1]}", True, (255, 255, 255))
+        settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 140, 305)))
 
 
     for k in range(4):
@@ -190,7 +197,9 @@ def show_score():
 
         text = settings.score_font.render( f"PTS", True, (255, 255, 255))
         settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2 - 180, 440 + k * 100)))
-        settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2 + 180, 440 + k * 100)))
+
+        if joystick_num > 1:
+            settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2 + 180, 440 + k * 100)))
 
         if settings.killed[0][k] != -1:
             text = settings.score_font.render(f"{settings.killed[0][k]}", True, (255, 255, 255))
@@ -199,7 +208,7 @@ def show_score():
             text = settings.score_font.render(f"{settings.killed[0][k] * settings.bots_costs[k]}", True, (255, 255, 255))
             settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 280, 420 + k * 100)))
 
-        if settings.killed[1][k] != -1:
+        if settings.killed[1][k] != -1 and joystick_num > 1:
             text = settings.score_font.render(f"{settings.killed[1][k]}", True, (255, 255, 255))
             settings.main_surf.blit(text, text.get_rect(center=(settings.win_width // 2 + 80, 440 + k * 100)))
 
@@ -211,7 +220,9 @@ def show_score():
 
     text = settings.score_font.render(f"Total", True, (255, 255, 255))
     settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 140, 830)))
-    settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 140, 830)))
+
+    if joystick_num > 1:
+        settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 140, 830)))
 
 
     if settings.main_counter % 4 == 0 and settings.p < 4:
@@ -235,8 +246,9 @@ def show_score():
         text = settings.score_font.render(f"{sum(settings.enemies_killed[0])}", True, (255, 255, 255))
         settings.main_surf.blit(text, text.get_rect(topright=(settings.win_width // 2 - 80, 830)))
 
-        text = settings.score_font.render(f"{sum(settings.enemies_killed[1])}", True, (255, 255, 255))
-        settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 80, 830)))
+        if joystick_num > 1:
+            text = settings.score_font.render(f"{sum(settings.enemies_killed[1])}", True, (255, 255, 255))
+            settings.main_surf.blit(text, text.get_rect(topleft=(settings.win_width // 2 + 80, 830)))
 
 
 def show_stage():
@@ -267,7 +279,10 @@ def show_stage():
     if not settings.stage_up:
         settings.stage_up_pos -= settings.win_height // 20
 
-settings.tanks = [Tank(settings, 1), Tank(settings, 2)]
+if joystick_num > 1:
+    settings.tanks = [Tank(settings, 1), Tank(settings, 2)]
+else:
+    settings.tanks = [Tank(settings, 1)]
 
 pg.mouse.set_pos(-100, 0)
 
@@ -364,7 +379,10 @@ while settings.run_game:
         block.draw()
 
 
-    if (settings.tanks[0].health + settings.tanks[1].health) == 0 and settings.enemies_left != 0:
+    hp = 0
+    for tank in settings.tanks:
+        hp += tank.health
+    if (hp) == 0 and settings.enemies_left != 0:
         settings.enemies_left = 0
         settings.cur_level = 0
         settings.stop_game = True
@@ -421,11 +439,11 @@ while settings.run_game:
     text = settings.hpfont.render(f"{settings.tanks[0].health}", True, (0, 0, 0))
     settings.main_surf.blit(text, text.get_rect(center=(settings.win_width - 25, settings.win_height // 2 -30)))
 
-
-    text = settings.hpfont.render(f"II P", True, (0, 0, 0))
-    settings.main_surf.blit(text, text.get_rect(center=(settings.win_width - 25, settings.win_height // 2 + 30)))
-    text = settings.hpfont.render(f"{settings.tanks[1].health}", True, (0, 0, 0))
-    settings.main_surf.blit(text, text.get_rect(center=(settings.win_width - 25, settings.win_height // 2 + 60)))
+    if joystick_num > 1:
+        text = settings.hpfont.render(f"II P", True, (0, 0, 0))
+        settings.main_surf.blit(text, text.get_rect(center=(settings.win_width - 25, settings.win_height // 2 + 30)))
+        text = settings.hpfont.render(f"{settings.tanks[1].health}", True, (0, 0, 0))
+        settings.main_surf.blit(text, text.get_rect(center=(settings.win_width - 25, settings.win_height // 2 + 60)))
 
 
     if settings.enemies_left == 0:
@@ -476,38 +494,40 @@ while settings.run_game:
                 settings.staying_sound.stop()
                 show_score()
 
-
+    text = settings.fps_font.render(f"{round(clock.get_fps())}", True, (255, 255, 255))
+    settings.main_surf.blit(text, text.get_rect(topleft=(10, 20)))
 
     settings.screen.blit(settings.main_surf, (406, -14))
 
     if not settings.wait:
-        j0_left_right = js_0.get_axis(0)
-        if round(j0_left_right) == 1:
-            settings.tanks[1].move = [1, 0, 0, 0]
-            # print("right")
+        if joystick_num > 1:
+            j0_left_right = js_0.get_axis(0)
+            if round(j0_left_right) == 1:
+                settings.tanks[1].move = [1, 0, 0, 0]
+                # print("right")
 
-        elif round(j0_left_right) == -1:
-            settings.tanks[1].move = [0, 1, 0, 0]
-            # print("left")
+            elif round(j0_left_right) == -1:
+                settings.tanks[1].move = [0, 1, 0, 0]
+                # print("left")
 
-        elif round(j0_left_right) == 0:
-            settings.tanks[1].move[0], settings.tanks[1].move[1] = 0, 0
+            elif round(j0_left_right) == 0:
+                settings.tanks[1].move[0], settings.tanks[1].move[1] = 0, 0
 
-        j0_up_down = js_0.get_axis(1)
-        if round(j0_up_down) == 1:
-            settings.tanks[1].move = [0, 0, 1, 0]
-            # print("down")
+            j0_up_down = js_0.get_axis(1)
+            if round(j0_up_down) == 1:
+                settings.tanks[1].move = [0, 0, 1, 0]
+                # print("down")
 
-        elif round(j0_up_down) == -1:
-            settings.tanks[1].move = [0, 0, 0, 1]
-            # print("up")
+            elif round(j0_up_down) == -1:
+                settings.tanks[1].move = [0, 0, 0, 1]
+                # print("up")
 
-        elif round(j0_up_down) == 0:
-            settings.tanks[1].move[2], settings.tanks[1].move[3] = 0, 0
+            elif round(j0_up_down) == 0:
+                settings.tanks[1].move[2], settings.tanks[1].move[3] = 0, 0
 
-        fire_button = js_0.get_button(0)
-        if fire_button:
-            settings.tanks[1].fire()
+            fire_button = js_0.get_button(0)
+            if fire_button:
+                settings.tanks[1].fire()
 
 
 
@@ -539,17 +559,29 @@ while settings.run_game:
         if fire_button:
             settings.tanks[0].fire()
 
-
-        if abs(round(j1_up_down)) + abs(round(j1_left_right)) + abs(round(j0_up_down)) + abs(round(j0_left_right)) != 0:
-            if settings.stay:
-                settings.moving_sound.play(loops=-1)
-                settings.stay = False
-                settings.staying_sound.stop()
+        if joystick_num > 1:
+            if abs(round(j1_up_down)) + abs(round(j1_left_right)) + abs(round(j0_up_down)) + abs(round(j0_left_right)) != 0:
+                if settings.stay:
+                    settings.moving_sound.play(loops=-1)
+                    settings.stay = False
+                    settings.staying_sound.stop()
+            else:
+                if not settings.stay:
+                    settings.staying_sound.play(loops=-1)
+                    settings.moving_sound.stop()
+                    settings.stay = True
         else:
-            if not settings.stay:
-                settings.staying_sound.play(loops=-1)
-                settings.moving_sound.stop()
-                settings.stay = True
+            if abs(round(j1_up_down)) + abs(round(j1_left_right)) != 0:
+                if settings.stay:
+                    settings.moving_sound.play(loops=-1)
+                    settings.stay = False
+                    settings.staying_sound.stop()
+            else:
+                if not settings.stay:
+                    settings.staying_sound.play(loops=-1)
+                    settings.moving_sound.stop()
+                    settings.stay = True
+
     else:
         settings.staying_sound.stop()
         settings.moving_sound.stop()

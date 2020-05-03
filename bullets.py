@@ -94,6 +94,9 @@ class Bullet:
                     self.settings.death_sound.play()
                     self.settings.enemies_left = 0
                     self.settings.fin.pop(self.settings.fin.index(block))
+                    for tank in self.settings.tanks:
+                        tank.health = 0
+                        
                     self.settings.stop_game = True
                     return True
         return False

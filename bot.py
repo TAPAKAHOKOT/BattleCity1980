@@ -23,6 +23,7 @@ class Bot:
 
         self.move = [0, 0, 0, 0]
         self.angle = 0
+        self.move[rnd(0, 3)] = 1
 
         self.speed = self.settings.bots_speed[tank_ind]
 
@@ -65,19 +66,21 @@ class Bot:
 
         self.rect = pg.Rect( (self.x, self.y, self.size, self.size))
 
-        self.fin_pos = 50 + self.settings.fin_pos[0] * self.settings.cells_size, \
-                       50 + self.settings.fin_pos[1] * self.settings.cells_size
+        self.fin_pos = []
+        for fin_pos in self.settings.fin_pos:
+            self.fin_pos.append([50 + fin_pos[0] * self.settings.cells_size,
+                                 50 + fin_pos[1] * self.settings.cells_size])
 
-        if abs(self.fin_pos[0] - self.x) > abs(self.fin_pos[1] - self.y):
-            if self.fin_pos[0] > self.x:
-                self.move = [1, 0, 0, 0]
-            else:
-                self.move = [0, 1, 0, 0]
-        else:
-            if self.fin_pos[1] > self.y:
-                self.move = [0, 0, 1, 0]
-            else:
-                self.move = [0, 0, 0, 1]
+        # if abs(self.fin_pos[0] - self.x) > abs(self.fin_pos[1] - self.y):
+        #     if self.fin_pos[0] > self.x:
+        #         self.move = [1, 0, 0, 0]
+        #     else:
+        #         self.move = [0, 1, 0, 0]
+        # else:
+        #     if self.fin_pos[1] > self.y:
+        #         self.move = [0, 0, 1, 0]
+        #     else:
+        #         self.move = [0, 0, 0, 1]
 
     def draw(self):
         if self.start_counter > self.settings.spawn_time:
@@ -138,21 +141,21 @@ class Bot:
     def chose_side(self):
 
         if self.move[0] + self.move[1] == 1:
-            if abs(self.fin_pos[0] - self.x) < 50:
-                if self.fin_pos[1] > self.y:
+            if abs(self.fin_pos[0][0] - self.x) < 50:
+                if self.fin_pos[0][1] > self.y:
                     self.move = [0, 0, 1, 0]
                 else:
                     self.move = [0, 0, 0, 1]
         else:
-            if abs(self.fin_pos[1] - self.y) < 50:
-                if self.fin_pos[0] > self.x:
+            if abs(self.fin_pos[0][1] - self.y) < 50:
+                if self.fin_pos[0][0] > self.x:
                     self.move = [1, 0, 0, 0]
                 else:
                     self.move = [0, 1, 0, 0]
 
     def change_side(self):
         if self.move[0] + self.move[1] == 1:
-            if self.fin_pos[1] > self.y:
+            if self.fin_pos[0][1] > self.y:
                 self.move = [0, 0, 1, 0]
                 self.angle = 180
                 self.bullet_move = [0, 1]
@@ -161,7 +164,7 @@ class Bot:
                 self.angle = 0
                 self.bullet_move = [0, -1]
         else:
-            if self.fin_pos[0] > self.x:
+            if self.fin_pos[0][0] > self.x:
                 self.move = [1, 0, 0, 0]
                 self.angle = -90
                 self.bullet_move = [1, 0]
@@ -174,21 +177,24 @@ class Bot:
 
         self.counter += 1
 
-        if rnd(2, 8) == 3:
+        if rnd(0, 50) == 3:
             self.chose_side()
 
-        if self.fin_pos[0] - 50 <= self.x <= self.fin_pos[0] + 50:
-            self.fire()
+        for fin_pos in self.fin_pos:
+            if fin_pos[0] - 50 <= self.x <= fin_pos[0] + 50:
+                self.fire()
 
-        elif self.fin_pos[1] - 50 <= self.y <= self.fin_pos[1] + 50:
-            self.fire()
+            elif fin_pos[1] - 50 <= self.y <= fin_pos[1] + 50:
+                self.fire()
 
         for tank in self.settings.tanks:
             if tank.x - 50 <= self.x <= tank.x + 50:
-                self.fire()
+                if (self.y < tank.y and self.move[1] == 1) or (self.y >= tank.y and self.move[1] == -1):
+                    self.fire()
 
             elif tank.y - 50 <= self.y <= tank.y + 50:
-                self.fire()
+                if (self.x < tank.x and self.move[0] == 1) or (self.x >= tank.x and self.move[0] == -1):
+                    self.fire()
 
         if self.move[0] == 1:
             self.angle = -90
@@ -196,8 +202,8 @@ class Bot:
             if self.test_to_move([10, 0]):
                 self.x += self.speed
             else:
-                # self.change_side()
-                if rnd(0, self.fire_rate) == 3:
+
+                if rnd(0, 3) == 0:
                     self.fire()
 
                 self.move = choice([[0, 0, 1, 0], [0, 0, 0, 1]])
@@ -208,8 +214,8 @@ class Bot:
             if self.test_to_move([-10, 0]):
                 self.x -= self.speed
             else:
-                # self.change_side()
-                if rnd(0, self.fire_rate) == 3:
+
+                if rnd(0, 3) == 0:
                     self.fire()
 
                 self.move = choice([[0, 0, 1, 0], [0, 0, 0, 1]])
@@ -220,8 +226,8 @@ class Bot:
             if self.test_to_move([0, 10]):
                 self.y += self.speed
             else:
-                # self.change_side()
-                if rnd(0, self.fire_rate) == 3:
+
+                if rnd(0, 3) == 0:
                     self.fire()
 
                 self.move = choice([[1, 0, 0, 0], [0, 1, 0, 0]])
@@ -232,8 +238,8 @@ class Bot:
             if self.test_to_move([0, -10]):
                 self.y -= self.speed
             else:
-                # self.change_side()
-                if rnd(0, self.fire_rate) == 3:
+
+                if rnd(0, 3) == 0:
                     self.fire()
 
                 self.move = choice([[1, 0, 0, 0], [0, 1, 0, 0]])

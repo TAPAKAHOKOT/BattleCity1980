@@ -11,8 +11,11 @@ class Bonus:
 
         self.rect = Rect((self.x, self.y, self.settings.cells_size * 2, self.settings.cells_size * 2))
 
-        # self.bonus_index = rnd(1, 6)
-        self.bonus_index = choice([1, 2, 4, 5, 6])
+        # self.bonus_index = choice([1, 2, 4, 5, 6])
+        if rnd(0, 3) == 3:
+            self.bonus_index = choice([4, 5])
+        else:
+            self.bonus_index = choice([1, 2, 6])
 
         self.image = transform.scale(image.load(f"images/bonuses/bonus{self.bonus_index}.png"),
                                      (self.settings.cells_size * 2, self.settings.cells_size * 2))
