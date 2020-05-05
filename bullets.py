@@ -1,6 +1,5 @@
 import pygame as pg
 from bonuses import Bonus
-import winsound as ws
 
 class Bullet:
     def __init__(self, settings, pos, move, team, speed, ind = -1):

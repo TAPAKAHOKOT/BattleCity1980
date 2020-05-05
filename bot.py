@@ -1,7 +1,5 @@
 import pygame as pg
-from random import randint as rnd
 from bullets import Bullet
-from random import choice
 from random import randint as rnd
 from random import choice
 
@@ -189,12 +187,12 @@ class Bot:
 
         for tank in self.settings.tanks:
             if tank.x - 50 <= self.x <= tank.x + 50:
-                if (self.y < tank.y and self.move[1] == 1) or (self.y >= tank.y and self.move[1] == -1):
-                    self.fire()
+                # if (self.y < tank.y and self.move[1] == 1) or (self.y >= tank.y and self.move[1] == -1):
+                self.fire()
 
             elif tank.y - 50 <= self.y <= tank.y + 50:
-                if (self.x < tank.x and self.move[0] == 1) or (self.x >= tank.x and self.move[0] == -1):
-                    self.fire()
+                # if (self.x < tank.x and self.move[0] == 1) or (self.x >= tank.x and self.move[0] == -1):
+                self.fire()
 
         if self.move[0] == 1:
             self.angle = -90

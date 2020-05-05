@@ -12,19 +12,16 @@ from water import Water
 from bot import Bot
 from random import randint as rnd
 import keyboard as kb
-from threading import Thread
-import winsound as ws
-
-
 
 pg.init()
 pg.display.init()
 
-
 joystick_num = pg.joystick.get_count()
 
-js_1 = pg.joystick.Joystick(0)
-js_1.init()
+
+if joystick_num > 0:
+    js_1 = pg.joystick.Joystick(0)
+    js_1.init()
 
 if joystick_num > 1:
     js_0 = pg.joystick.Joystick(1)
@@ -50,35 +47,38 @@ arr = file.read().split("|")[1:]
 glo = []
 l = []
 
-for k in range(len(arr)//2):
-    fd[arr[k * 2]] = []
+def load_levels():
+    for k in range(len(arr)//2):
+        fd[arr[k * 2]] = []
 
-    a = []
-    for lol in arr[ k * 2 + 1 ].split("\n"):
-        bb = []
-        for n in lol.split("$"):
-            co = []
-            if "!" not in n:
-                for u in n.split(", "):
-                    if u != "":
-                        bb.append(int(u))
-            else:
-                for i in n.split("!"):
-                    if i != ", ":
-                        r = []
-                        for t in i.split(", "):
-                            if t != "":
-                                r.append(int(t[:1]))
-                        if r:
-                            co.append(r)
-            if co:
-                bb.append(co)
-        if bb:
-            fd[arr[k * 2]].append(bb)
-file.close()
-settings.levels = deepcopy(fd)
+        a = []
+        for lol in arr[ k * 2 + 1 ].split("\n"):
+            bb = []
+            for n in lol.split("$"):
+                co = []
+                if "!" not in n:
+                    for u in n.split(", "):
+                        if u != "":
+                            bb.append(int(u))
+                else:
+                    for i in n.split("!"):
+                        if i != ", ":
+                            r = []
+                            for t in i.split(", "):
+                                if t != "":
+                                    r.append(int(t[:1]))
+                            if r:
+                                co.append(r)
+                if co:
+                    bb.append(co)
+            if bb:
+                fd[arr[k * 2]].append(bb)
+    file.close()
+    settings.levels = deepcopy(fd)
 
-settings.field = deepcopy(settings.levels[str(settings.cur_level)])
+    settings.field = deepcopy(settings.levels[str(settings.cur_level)])
+
+load_levels()
 
 def init_game():
     for y, row in enumerate(settings.field):
@@ -530,34 +530,34 @@ while settings.run_game:
                 settings.tanks[1].fire()
 
 
+        if joystick_num > 0:
+            j1_left_right = js_1.get_axis(0)
+            if round(j1_left_right) == 1:
+                settings.tanks[0].move = [1, 0, 0, 0]
+                # print("right")
 
-        j1_left_right = js_1.get_axis(0)
-        if round(j1_left_right) == 1:
-            settings.tanks[0].move = [1, 0, 0, 0]
-            # print("right")
+            elif round(j1_left_right) == -1:
+                settings.tanks[0].move = [0, 1, 0, 0]
+                # print("left")
 
-        elif round(j1_left_right) == -1:
-            settings.tanks[0].move = [0, 1, 0, 0]
-            # print("left")
+            elif round(j1_left_right) == 0:
+                settings.tanks[0].move[0], settings.tanks[0].move[1] = 0, 0
 
-        elif round(j1_left_right) == 0:
-            settings.tanks[0].move[0], settings.tanks[0].move[1] = 0, 0
+            j1_up_down = js_1.get_axis(1)
+            if round(j1_up_down) == 1:
+                settings.tanks[0].move = [0, 0, 1, 0]
+                # print("down")
 
-        j1_up_down = js_1.get_axis(1)
-        if round(j1_up_down) == 1:
-            settings.tanks[0].move = [0, 0, 1, 0]
-            # print("down")
+            elif round(j1_up_down) == -1:
+                settings.tanks[0].move = [0, 0, 0, 1]
+                # print("up")
 
-        elif round(j1_up_down) == -1:
-            settings.tanks[0].move = [0, 0, 0, 1]
-            # print("up")
+            elif round(j1_up_down) == 0:
+                settings.tanks[0].move[2], settings.tanks[0].move[3] = 0, 0
 
-        elif round(j1_up_down) == 0:
-            settings.tanks[0].move[2], settings.tanks[0].move[3] = 0, 0
-
-        fire_button = js_1.get_button(0)
-        if fire_button:
-            settings.tanks[0].fire()
+            fire_button = js_1.get_button(0)
+            if fire_button:
+                settings.tanks[0].fire()
 
         if joystick_num > 1:
             if abs(round(j1_up_down)) + abs(round(j1_left_right)) + abs(round(j0_up_down)) + abs(round(j0_left_right)) != 0:
@@ -570,7 +570,7 @@ while settings.run_game:
                     settings.staying_sound.play(loops=-1)
                     settings.moving_sound.stop()
                     settings.stay = True
-        else:
+        elif joystick_num > 0:
             if abs(round(j1_up_down)) + abs(round(j1_left_right)) != 0:
                 if settings.stay:
                     settings.moving_sound.play(loops=-1)
@@ -595,9 +595,9 @@ while settings.run_game:
 
             if not settings.wait:
                 if event.key in [97, 100, 115, 119]:
-                    # settings.moving_sound.play(loops=-1)
-                    # settings.staying_sound.stop()
-                    pass
+                    if joystick_num == 0:
+                        settings.moving_sound.play(loops=-1)
+                        settings.staying_sound.stop()
 
                 if event.key == 119:
                     settings.tanks[0].move = [0, 0, 0, 1]
@@ -633,10 +633,15 @@ while settings.run_game:
             if event.key in [97, 100, 115, 119]:
                 settings.tanks[0].move = [0, 0, 0, 0]
 
-                # settings.staying_sound.play(loops=-1)
-                # settings.moving_sound.stop()
+                if joystick_num == 0:
+                    settings.staying_sound.play(loops=-1)
+                    settings.moving_sound.stop()
 
             if event.key in [102, 103, 104, 116]:
                 settings.tanks[1].move = [0, 0, 0, 0]
+
+                if joystick_num == 0:
+                    settings.staying_sound.play(loops=-1)
+                    settings.moving_sound.stop()
 
     pg.display.update()

@@ -1,7 +1,6 @@
 
 from pygame import transform, image, Rect
 from random import randint as rnd, choice
-import winsound as ws
 
 class Bonus:
     def __init__(self, settings):

@@ -2,7 +2,6 @@ import pygame as pg
 from random import randint as rnd
 from bullets import Bullet
 import winsound as ws
-from threading import Thread
 
 class Tank:
     def __init__(self, settings, ind):

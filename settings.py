@@ -22,7 +22,7 @@ class Settings:
         self.cur_level = 1
         self.levels_num = 14
 
-        self.enemies_at_level = 2
+        self.enemies_at_level = 20
         self.bots_spawned = 0
         self.enemies_left = self.enemies_at_level
 
