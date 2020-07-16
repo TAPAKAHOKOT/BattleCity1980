@@ -9,4 +9,4 @@ total made 14 levels.
 ![Screenshot](images/img1.png)
 
 Level editor
-![Screenshot](images/imgw.png)
+![Screenshot](images/img2.png)
